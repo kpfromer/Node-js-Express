@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require("express");
+const bodyParser = require("body-parser");
 
 const port = 3000;
 
@@ -23,6 +24,8 @@ app.set("view engine", "pug");
 //DOCUMENTATION: A directory or an array of directories for the application's views. If an array, the views are looked up in the order they occur in the array.
 app.set("views", `${process.cwd()}/templates`);
 
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.get("/", (req, res) => {
     res.render("index");
     // res.end();
@@ -39,6 +42,16 @@ app.get("/cards", (req, res) => {
 });
 
 app.get("/hello", (req, res) => {
+    res.render("hello")
+});
+
+app.post("/hello", (req, res) => {
+    res.render("hello", {name: req.body.username});
+});
+
+
+
+app.get("/helloworld", (req, res) => {
     res.send("<h1>hello, world!</h1>");
 });
 
