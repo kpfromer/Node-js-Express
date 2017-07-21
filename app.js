@@ -2,6 +2,7 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 const port = 3000;
 
@@ -25,34 +26,45 @@ app.set("view engine", "pug");
 app.set("views", `${process.cwd()}/templates`);
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-app.get("/", (req, res) => {
-    res.render("index");
-    // res.end();
+
+app.use((req, res, next) => {
+    console.log('One!');
+    req.thisisanything = 'hello';
+    next();
 });
 
-app.get("/cards", (req, res) => {
-    const locals = {};
-
-    locals.prompt = "Who is buried in Grant's tomb?";
-    locals.hint = "Think about about whose tomb it is!";
-    locals.colors = colors;
-
-    res.render('card', locals);
+app.use((req, res, next) => {
+    console.log('Two!');
+    console.log(req.thisisanything);
+    next();
 });
 
-app.get("/hello", (req, res) => {
-    res.render("hello")
-});
-
-app.post("/hello", (req, res) => {
-    res.render("hello", {name: req.body.username});
+app.use('/error', (req, res, next) => {
+   const err = new Error("Oh no!");
+   err.statusCode = 500;
+   next(err);
 });
 
 
+const routes = require('./routes');//no need to include index.js since it defaults to that!
 
-app.get("/helloworld", (req, res) => {
-    res.send("<h1>hello, world!</h1>");
+app.use(routes);
+
+//runs if no router was found
+
+app.use((req, res, next) => {
+    const err = new Error('Not Found');
+    err.statusCode = 404;
+    next(err)
+});
+
+
+app.use((err, req, res, next) => {
+    res.locals.error = err;
+    res.status(err.statusCode);
+    res.render("error");
 });
 
 

@@ -2,4 +2,9 @@ extends layout
 
 block content
     section#content
-        h2 Welcome, Student!
+        if name
+            h2 Hello #{name}!
+        else
+            h2 Hello, student!
+    form(action='/goodbye', method='post')
+        button(type='submit') Goodbye!
