@@ -2,7 +2,14 @@ doctype html
 html(lang="en")
     head
         title Flash Cards
+        link(rel='stylesheet', href='/static/stylesheets/style.css')
     body
         include includes/header
+        if name
+            h2 Hello #{name}!
+            form(action='/goodbye', method='post')
+                button(type='submit') Goodbye!
+        else
+            h2 Hello, student!
         block content
         include includes/footer

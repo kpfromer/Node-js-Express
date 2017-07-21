@@ -13,16 +13,6 @@ router.get("/", (req, res) => {
     }
 });
 
-router.get("/cards", (req, res) => {
-    const locals = {};
-
-    locals.prompt = "Who is buried in Grant's tomb?";
-    locals.hint = "Think about about whose tomb it is!";
-    locals.colors = colors;
-
-    res.render('card', locals);
-});
-
 router.get("/hello", (req, res) => {
 
     const name = req.cookies.username;

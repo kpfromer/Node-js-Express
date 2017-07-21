@@ -8,15 +8,6 @@ const port = 3000;
 
 const app = express();
 
-const colors = [
-    'red',
-    'orange',
-    'yellow',
-    'green',
-    'blue',
-    'purple'
-];
-
 //app.set defines different settings in express
 //this sets the the file extension default
 //DOCUMENTATION: If the path does not contain a file extension, then the view engine setting determines the file extension.
@@ -28,6 +19,7 @@ app.set("views", `${process.cwd()}/templates`);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use('/static', express.static('public'));
 
 app.use((req, res, next) => {
     console.log('One!');
@@ -41,16 +33,19 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/error', (req, res, next) => {
-   const err = new Error("Oh no!");
-   err.statusCode = 500;
-   next(err);
-});
+// app.use('/error', (req, res, next) => {
+//    const err = new Error("Oh no!");
+//    err.statusCode = 500;
+//    next(err);
+// });
 
 
 const routes = require('./routes');//no need to include index.js since it defaults to that!
+const cardRoutes = require('./routes/cards');
 
 app.use(routes);
+
+app.use('/cards', cardRoutes);
 
 //runs if no router was found
 
@@ -63,7 +58,7 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
     res.locals.error = err;
-    res.status(err.statusCode);
+    err.statusCode ? res.status(err.statusCode) : res.status(500);
     res.render("error");
 });
 
